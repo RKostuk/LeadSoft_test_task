@@ -1,0 +1,43 @@
+version: '3'
+services:
+  website:
+    build:
+      context: ./flask
+      dockerfile: Dockerfile
+    ports:
+      - 5000:5000
+    depends_on:
+      - server
+  server:
+    build:
+      context: ./flask
+      dockerfile: Dockerfile
+    container_name: server
+    ports:
+      - 5001:5001
+    command: ["python","server.py"]
+    depends_on:
+      - admin
+  jsonserver:
+    build:
+      context: ./admin-panel
+      dockerfile: Dockerfile
+    container_name: jsonserver
+    command: ["npm", "run", "server"]
+    ports:
+      - 3001:3001
+  admin:
+    build:
+      context: ./admin-panel
+      dockerfile: Dockerfile
+    ports:
+      - 3000:3000
+    command: ["npm", "start"]
+    depends_on:
+      - jsonserver
+
+# 1 - json - 3001
+# 2 - admin - 3000
+# 3 - server - 5001
+# 4 - site - 5000
+
